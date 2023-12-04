@@ -1,0 +1,145 @@
+// Rework of rope making bot by Purus
+
+const PBotUtils = Java.type('haven.purus.pbot.PBotUtils');
+const PBotGobAPI = Java.type('haven.purus.pbot.PBotGobAPI');
+const PBotAPI = Java.type('haven.purus.pbot.PBotAPI');
+const PBotCharacterAPI = Java.type('haven.purus.pbot.PBotCharacterAPI');
+const ui = PBotAPI.ui();
+const PBotWindowAPI = Java.type('haven.purus.pbot.PBotWindowAPI');
+const window = PBotUtils.PBotWindow(ui, "Rope Maker", 200, 200, ScriptID);
+const ropeStockpiles = [];
+const stringStockpiles = [];
+let ropewalkGob, ropeMade = 0;
+let stop = false;
+
+window.addButton("ropeBtn", "Add rope stockpiles", 180, 10, 10);
+window.addButton("stringBtn", "Add string stockpiles", 180, 10, 40);
+window.addButton("ropewalkBtn", "Choose a ropewalk", 180, 10, 70);
+window.addButton("startBtn", "Start", 180, 10, 100);
+window.addButton("stopBtn", "EXIT", 50, 10, 130);
+window.addButton("craftBtn", "craft", 50, 10, 160);
+
+const craftBtn = () => {
+	PBotUtils.craftItem(ui, "rope", 1);
+};
+
+const stopBtn = () => {
+	PBotUtils.stop();
+};
+
+function shouldStop() {
+	if (PBotCharacterAPI.getEnergy(ui) <= 22) PBotUtils.debugMsg(ui, "Not enough energy!");
+	if (stop) PBotUtils.debugMsg(ui, "Stop!");
+	if (window.closed()) PBotUtils.debugMsg(ui, "Windows closed!");
+	return stop || window.closed() || PBotCharacterAPI.getEnergy(ui) <= 22;
+};
+
+const ropeBtn = () => {
+	PBotUtils.selectArea(ui);
+	const gobs = PBotUtils.gobsInArea(ui, PBotUtils.getSelectedAreaA(), PBotUtils.getSelectedAreaB());
+	for(let i=0; i<gobs.size(); i++) {
+		if(gobs[i].getResname() === 'gfx/terobjs/stockpile-rope')
+			ropeStockpiles.push(gobs[i]);
+	}
+	PBotUtils.debugMsg(ui, "Rope stockpiles currently chosen: " + ropeStockpiles.length);
+};
+
+const stringBtn
+= () => {
+	PBotUtils.selectArea(ui);
+	const gobs = PBotUtils.gobsInArea(ui, PBotUtils.getSelectedAreaA(), PBotUtils.getSelectedAreaB());
+	for(let i=0; i<gobs.size(); i++) {
+		if(gobs[i].getResname() === 'gfx/terobjs/stockpile-flaxfibre' || gobs[i].getResname() === 'gfx/terobjs/stockpile-hempfibre')
+			stringStockpiles.push(gobs[i]);
+	}
+	PBotUtils.debugMsg(ui, "string stockpiles currently chosen: " + ropeStockpiles.length);
+};
+
+const ropewalkBtn = () => {
+	PBotUtils.debugMsg(ui, "Please alt+click a ropewalk!");
+	const selectedGob = PBotGobAPI.selectGob(ui);
+	if(selectedGob.getResname() === 'gfx/terobjs/ropewalk') {
+		PBotUtils.debugMsg(ui, "Ropewalk selected!");
+		ropewalkGob = selectedGob;
+	} else {
+		PBotUtils.debugMsg(ui, "Selected gob was not a ropewalk!");
+	}
+};
+
+const startBtn = () => {
+	PBotUtils.debugMsg(ui, "Starting the ropemaker bot...");
+	if(!ropewalkGob) {
+		PBotUtils.debugMsg(ui, "Ropewalk not selected! Cancelling...");
+		return;
+	}
+	while(!shouldStop()) {
+		const playerInv = PBotUtils.playerInventory(ui);
+		if(stringStockpiles.length === 0) {
+			PBotUtils.debugMsg(ui, "Ran out of string stockpiles!");
+			break;
+		}
+		let flaxInInv = playerInv.getInventoryItemsByNames('Flax Fibres').size();
+		let hempInInv = playerInv.getInventoryItemsByNames('Hemp Fibres').size();
+		let stringInInv = flaxInInv + hempInInv;
+		while(!shouldStop() && playerInv.freeSlotsInv() > 0) {
+			if(stringStockpiles.length === 0) {
+				// Out of string stockpiles
+				break;
+			}
+			PBotUtils.pfRightClick(ui, stringStockpiles[0], 0);
+			PBotUtils.sleep(1000);
+			PBotWindowAPI.waitForWindow(ui, "Stockpile", 2000);
+			const slots = playerInv.freeSlotsInv();
+			const string = PBotWindowAPI.getStockpileUsedCapacity(ui);
+			if(string <= slots)
+				stringStockpiles.shift();
+			PBotWindowAPI.takeItemsFromStockpile(ui, Math.min(slots, string));
+			stringInInv += Math.min(slots, string);
+			while(!shouldStop() && playerInv.freeSlotsInv() != Math.max(0, slots-string)) {
+				PBotUtils.sleep(25);
+			}
+			if (shouldStop()) break;
+		}
+		if (shouldStop()) break;
+		if(Math.floor(stringInInv/11) == 0) {
+			break;
+		}
+
+		if (PBotUtils.pfRightClick(ui, ropewalkGob, 0)) PBotUtils.debugMsg(ui, "Ropewalk is found");
+		else {
+		    PBotUtils.debugMsg(ui, "Ropewalk not found");
+		    break;
+		}
+		PBotUtils.sleep(1000); //wait
+
+		if (PBotCharacterAPI.getStamina(ui) < 60)
+            if (!PBotUtils.drink(ui, true)) {
+            	PBotUtils.debugMsg(ui, "Ran out of water!");
+            	break;
+            }
+
+		PBotUtils.craftItem(ui, "rope", 1);
+		PBotUtils.sleep(2000);
+		while (!shouldStop() && PBotGobAPI.player(ui).getPoses().contains("gfx/borka/ropewalking")) {
+		    PBotUtils.sleep(1000);
+		}
+		if (shouldStop()) break;
+
+	    PBotUtils.pfRightClick(ui, ropeStockpiles[0], 0);
+	    PBotWindowAPI.waitForWindow(ui, "Stockpile", 2000);
+	    const slots = PBotWindowAPI.getStockpileTotalCapacity(ui);
+	    const used = PBotWindowAPI.getStockpileUsedCapacity(ui);
+		let ropeInInv = playerInv.getInventoryItemsByNames('Rope').size();
+	    const count = Math.min(ropeInInv, slots-used);
+		PBotWindowAPI.putItemFromInventoryToStockpile(ui, count);
+		if(count + used === slots)
+			ropeStockpiles.shift();
+		ropeInInv -= count;
+		while(!shouldStop() && playerInv.getInventoryItemsByNames('Rope').size() !== ropeInInv) {
+			PBotUtils.sleep(25);
+		}
+		if (shouldStop()) break;
+	}
+	PBotUtils.debugMsg(ui, "Rope maker bot finished! Made " + ropeMade + " rope in total!");
+
+};
