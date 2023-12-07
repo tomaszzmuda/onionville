@@ -1,0 +1,39 @@
+const PBotAPI = Java.type('haven.purus.pbot.PBotAPI');
+const ui = PBotAPI.ui();
+const PBotUtils = Java.type('haven.purus.pbot.PBotUtils');
+const PBotCharacterAPI = Java.type('haven.purus.pbot.PBotCharacterAPI');
+const PBotGobAPI = Java.type('haven.purus.pbot.PBotGobAPI');
+const window = PBotUtils.PBotWindow(ui, "Point Counter", 70, 200, ScriptID);
+const lab = window.addLabel("Points: 0", 10, 10);
+const btn = window.addButton("btnClick", "Licz", 180, 10, 30);
+
+const Animal = {
+    "gfx/kritter/bear/bear": 25,
+    "gfx/kritter/boar/boar": 10,
+    "gfx/kritter/moose/moose": 25,
+    "gfx/kritter/badger/badger": 5,
+    "gfx/kritter/fox/fox": 5,
+    "gfx/kritter/wolverine/wolverine": 5,
+    "gfx/kritter/lynx/lynx": 10,
+    "gfx/kritter/goat/goat": 5,
+    "gfx/kritter/cattle/cattle": 10,
+    "gfx/kritter/wolf/wolf": 30,
+    "gfx/kritter/horse/horse": 10,
+    "gfx/kritter/reddeer/reddeer": 10,
+    "gfx/kritter/roedeer/roedeer": 5,
+    "gfx/kritter/beaver/beaver": 5,
+    
+  };
+
+const btnClick = () => {
+	PBotUtils.selectArea(ui);
+    let gobs = PBotUtils.gobsInArea(ui, PBotUtils.getSelectedAreaA(), PBotUtils.getSelectedAreaB());
+    let points = 0;
+    for (let gob of gobs) {
+        
+        if(gob.gob.name() in Animal){
+            points+=  Animal[gob.gob.name()];
+        }   
+    }
+    PBotUtils.sysMsg(ui, "Points: "+points);
+};
