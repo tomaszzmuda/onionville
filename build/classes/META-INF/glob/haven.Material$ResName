@@ -4,6 +4,7 @@ haven.Material$$mlink
 haven.Material$$nofacecull
 haven.Material$$order
 haven.Material$Colors
+haven.RenderedNormals$$maskcol
 haven.States$$colmask
 haven.States$$maskdepth
 haven.States$$vcol
