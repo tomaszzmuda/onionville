@@ -1,5 +1,5 @@
 
-            git-rev = 18d7ceba643fab1a7f44fb12f4f3cf862f33f010
+            git-rev = 32eb32cf66da8f45a5e8e7484159fd41a6d88bf7
             version = 2023.12.12
-            commit = Bot for steel
+            commit = Fix AddCoalToSmelter to work with stacks
         
