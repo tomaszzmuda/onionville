@@ -1,5 +1,5 @@
 
-            git-rev = 819f9bc7db4d747ba6d45b10f3126d5038d52e72
+            git-rev = 6da34b8eb4b5679ded6abb290ab6d55e9b9683a8
             version = 2024.01.14
-            commit = Merge https://github.com/Cediner/ArdClient
+            commit = Fix AddCoalToSmelter to work with stacks
         
