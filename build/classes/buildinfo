@@ -1,5 +1,5 @@
 
-            git-rev = 6da34b8eb4b5679ded6abb290ab6d55e9b9683a8
+            git-rev = a6df604526e0d1705e241c8cfa35f9af7f3e8a9b
             version = 2024.01.14
-            commit = Fix AddCoalToSmelter to work with stacks
+            commit = Add small delay
         
