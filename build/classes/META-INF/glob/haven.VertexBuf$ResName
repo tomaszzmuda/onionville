@@ -1,4 +1,5 @@
 haven.PoseMorph$$Res
+haven.PoseMorph$Old$Res
 haven.VertexBuf$ColorArray
 haven.VertexBuf$ColorDecode
 haven.VertexBuf$NormalArray
