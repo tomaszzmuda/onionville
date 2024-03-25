@@ -4,7 +4,6 @@ haven.FastMesh$MeshRes
 haven.Light$Res
 haven.MCache$ResOverlay
 haven.Material$NewMat
-haven.Material$OldMat
 haven.MeshAnim$Res
 haven.RenderLink$Res
 haven.Resource$AButton
@@ -19,6 +18,7 @@ haven.Resource$Music
 haven.Resource$Neg
 haven.Resource$Obstacle
 haven.Resource$Pagina
+haven.Resource$Props
 haven.Resource$Src
 haven.Resource$Tooltip
 haven.Skeleton$BoneOffset
@@ -27,6 +27,7 @@ haven.Skeleton$ResPose
 haven.SpriteLink
 haven.TexR
 haven.Tileset
+haven.Tileset$Flavor$Res
 haven.Tileset$OrigTileset
 haven.Tileset$Tile
 haven.VertexBuf$Legacy
