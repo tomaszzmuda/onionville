@@ -15,6 +15,7 @@ haven.ChatUI$$PMChat
 haven.ChatUI$$SChan
 haven.Chatwindow$$_
 haven.CheckBox$$_
+haven.DynresWindow$$_
 haven.Equipory$$_
 haven.FightWnd$$_
 haven.Fightsess$$_
@@ -23,6 +24,7 @@ haven.FlowerMenu$$_
 haven.GItem$$_
 haven.GameUI$$_
 haven.GiveButton$$_
+haven.HRuler$$_
 haven.IButton$$_
 haven.ICheckBox$$_
 haven.IMeter$$_
